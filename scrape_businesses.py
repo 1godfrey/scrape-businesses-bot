@@ -1,6 +1,7 @@
 import requests
 import os
 import pandas as pd
+from datetime import datetime
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
@@ -43,9 +44,12 @@ def main():
     for category, business_type in CATEGORIES.items():
         all_businesses.extend(fetch_businesses(category, business_type))
 
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"businesses_{timestamp}.csv"
+
     df = pd.DataFrame(all_businesses)
-    df.to_csv("businesses.csv", index=False)
-    print("CSV file generated successfully!")
+    df.to_csv(filename, index=False)
+    print(f"CSV file '{filename}' generated successfully!")
 
 if __name__ == "__main__":
     main()

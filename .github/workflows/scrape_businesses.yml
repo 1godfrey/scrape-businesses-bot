@@ -26,8 +26,12 @@ jobs:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
         run: python scrape_businesses.py
 
+      - name: Find the generated CSV
+        id: find_csv
+        run: echo "CSV_FILE=$(find . -maxdepth 1 -name 'businesses_*.csv' | head -n 1)" >> $GITHUB_ENV
+      
       - name: Upload CSV artifact
         uses: actions/upload-artifact@v4
         with:
           name: business_data
-          path: businesses.csv
+          path: ${{ env.CSV_FILE }}
