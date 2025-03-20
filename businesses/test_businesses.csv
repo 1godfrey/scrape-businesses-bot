@@ -1,4 +1,4 @@
-Business Name,Business Type,Email,Phone Number,Link to website,Address
-Joe's Barbershop,Barber Shop,betterasleep@gmail.com,123-456-7890,https://joesbarbers.com,123 Main St, NY
-Sally’s Tattoo,Tattoo Shop,N/A,987-654-3210,https://sallytattoo.com,456 Elm St, CA
-City Bites,Restaurant,senses10k@gmail.com.com,555-555-5555,https://citybites.com,789 Oak St, TX
+Business Name,Business Type,Website,Phone Number,Address,Email
+Joe's Barbershop,Barber Shop,https://joesbarbers.com,123-456-7890,123 Main St,betterasleep@gmail.com
+Sally’s Tattoo,Tattoo Shop,https://sallytattoo.com,987-654-3210,456 Elm St,N/A
+City Bites,Restaurant,https://citybites.com,555-555-5555,789 Oak St,senses10k@gmail.com.com

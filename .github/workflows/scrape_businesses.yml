@@ -30,9 +30,6 @@ jobs:
       - name: Find the generated CSV
         id: find_csv
         run: echo "CSV_FILE=$(find . -maxdepth 1 -name 'businesses_*.csv' | head -n 1)" >> $GITHUB_ENV
-
-      - name: Print extracted emails
-        run: cat ${{ env.EMAIL_CSV_FILE }}
       
       - name: Upload CSV artifact
         uses: actions/upload-artifact@v4

@@ -5,6 +5,7 @@ on:
 
 jobs:
   extract-emails:
+    name: Email Extraction
     runs-on: ubuntu-latest
 
     steps:
@@ -25,6 +26,9 @@ jobs:
       - name: Find the generated email CSV
         id: find_email_csv
         run: echo "EMAIL_CSV_FILE=$(find extracted_emails_*.csv | head -n 1)" >> $GITHUB_ENV
+
+      - name: Print extracted emails
+        run: cat ${{ env.EMAIL_CSV_FILE }}
 
       - name: Upload extracted emails artifact
         uses: actions/upload-artifact@v4
