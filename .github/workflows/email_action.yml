@@ -1,4 +1,4 @@
-name: Extract Emails from CSVs
+name: Extract and Send Emails
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install pandas
+        run: pip install pandas smtplib email-validator
 
       - name: Run email extraction script
         run: python extract_emails.py
@@ -35,3 +35,32 @@ jobs:
         with:
           name: extracted_emails
           path: ${{ env.EMAIL_CSV_FILE }}
+
+  send-emails:
+    name: Email Delivery
+    needs: extract-emails
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download extracted emails
+        uses: actions/download-artifact@v4
+        with:
+          name: extracted_emails
+          path: extracted_emails
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pandas smtplib email-validator
+
+      - name: Send emails
+        env:
+          SMTP_SERVER: "smtp.gmail.com"
+          SMTP_PORT: "587"
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SENDER_EMAIL: "mwalupindim@gmail.com"
+        run: python send_emails.py
