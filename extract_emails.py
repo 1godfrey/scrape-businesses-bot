@@ -19,10 +19,9 @@ def extract_valid_emails():
         print("No valid emails found.")
         return
 
-    # Convert to DataFrame & save
     timestamp = pd.Timestamp.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
     output_filename = f"extracted_emails_{timestamp}.csv"
-    pd.DataFrame({"Email": list(all_emails)}).to_csv(output_filename, index=False)
+    pd.DataFrame(list(all_emails)).to_csv(output_filename, index=False, header=False)
     print(f"Extracted emails saved to {output_filename}")
 
 if __name__ == "__main__":
