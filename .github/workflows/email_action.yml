@@ -18,7 +18,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install pandas smtplib email-validator
+        run: pip install pandas email-validator
 
       - name: Run email extraction script
         run: python extract_emails.py
