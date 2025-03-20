@@ -20,7 +20,11 @@ The Horizon Auto Team
 Client Outreach | Horizon Automation Tools  
 Contact Number: (513) 746-1311  
 Contact Email: horizonautomationtools@gmail.com  
+
+<img src="https://logopond.com/logos/dd5732c30db12fe0ba593d7d8bc0e2af.png" alt="Horizon Automation Logo" width="200">
 """
+
+
 
 def send_email(to_email):
     """Send an email using SMTP"""
