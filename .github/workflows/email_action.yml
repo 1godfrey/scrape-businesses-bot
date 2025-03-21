@@ -70,7 +70,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: extracted_emails
-          path: ${{ env.EMAIL_CSV_FILE }}
+          path: extracted_emails
 
       - name: Send emails and update sent_emails.txt
         env:
