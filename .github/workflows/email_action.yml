@@ -38,6 +38,12 @@ jobs:
         id: find_email_csv
         run: echo "EMAIL_CSV_FILE=$(find extracted_emails_*.csv | head -n 1)" >> $GITHUB_ENV
 
+      - name: Download extracted emails
+        uses: actions/download-artifact@v4
+        with:
+          name: extracted_emails
+          path: .
+      
       - name: Print extracted emails
         run: cat ${{ env.EMAIL_CSV_FILE }}
 
