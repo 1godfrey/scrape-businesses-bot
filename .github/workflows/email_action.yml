@@ -66,6 +66,12 @@ jobs:
       - name: Install dependencies
         run: pip install pandas email-validator
 
+      - name: Download extracted emails artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extracted_emails
+          path: ${{ env.EMAIL_CSV_FILE }}
+
       - name: Send emails and update sent_emails.txt
         env:
           SMTP_SERVER: "smtp.gmail.com"
