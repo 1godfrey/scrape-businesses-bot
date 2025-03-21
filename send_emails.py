@@ -30,15 +30,19 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 
 EMAIL_SUBJECT = "Helping Small Businesses with Tech Solutions"
 EMAIL_BODY = """\
-Hello,
+Hello,  
 
-We are a team that helps small businesses improve their online presence and automate workflows.
-Whether you need a booking system, e-commerce support, or business automation, we can help.
+We’re a small team passionate about helping small businesses enhance their online presence and streamline operations with smart automation.  
+Whether you need a booking system, e-commerce support, or workflow automation, we can provide tailored solutions to fit your needs.  
 
-Let's discuss how we can support your business. Looking forward to connecting!
+We’d love to discuss how we can support your business. Looking forward to connecting!  
 
 Best,  
-The NeuralAuto Team
+The Horizon Auto Team  
+Client Outreach | Horizon Automation Tools  
+Website: https://horizon-auto-website.onrender.com
+Contact Number: (513) 746-1311  
+Contact Email: horizonautomationtools@gmail.com  
 """
 
 def send_bulk_emails():
