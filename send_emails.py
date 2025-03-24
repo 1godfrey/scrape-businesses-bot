@@ -35,10 +35,10 @@ EMAIL_SUBJECT = "Helping Small Businesses with Tech Solutions"
 EMAIL_BODY = """
 Hello,  
 
-We’re a small team passionate about helping small businesses enhance their online presence and streamline operations with smart automation.  
+We are a small team passionate about helping small businesses enhance their online presence and streamline operations with smart automation.  
 Whether you need a booking system, e-commerce support, or workflow automation, we can provide tailored solutions to fit your needs.  
 
-We’d love to discuss how we can support your business. Looking forward to connecting!  
+We would love to discuss how we can support your business. Looking forward to connecting!  
 
 Best,  
 The Horizon Auto Team  
@@ -47,6 +47,9 @@ Website: https://horizon-auto-website.onrender.com
 Contact Number: (513) 746-1311  
 Contact Email: horizonautomationtools@gmail.com  
 """
+
+def remove_non_ascii(text):
+    return text.encode("ascii", "ignore").decode()
 
 def send_bulk_emails():
     # Read extracted emails
