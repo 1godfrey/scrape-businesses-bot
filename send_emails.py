@@ -48,9 +48,6 @@ Contact Number: (513) 746-1311
 Contact Email: horizonautomationtools@gmail.com  
 """
 
-def remove_non_ascii(text):
-    return text.encode("ascii", "ignore").decode()
-
 def send_bulk_emails():
     # Read extracted emails
     new_emails = pd.read_csv(EMAIL_CSV, header=None, names=["email"], encoding="utf-8")["email"].tolist()
