@@ -59,6 +59,9 @@ def send_bulk_emails():
         print("No emails found in CSV. Exiting...")
         sys.exit(0)
 
+    sent_count = 0
+    failed_count = 0
+
     # Connect to SMTP server
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
@@ -66,27 +69,40 @@ def send_bulk_emails():
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
 
             for email in new_emails:
-                msg = MIMEMultipart()
-                msg["From"] = SENDER_EMAIL
-                msg["To"] = email
-                msg["Subject"] = Header(EMAIL_SUBJECT, "utf-8")
-                
-                body = MIMEText(remove_non_ascii(EMAIL_BODY), "plain", "utf-8")
-                msg.attach(body)
+                try:
+                    msg = MIMEMultipart()
+                    msg["From"] = SENDER_EMAIL
+                    msg["To"] = email
+                    msg["Subject"] = Header(EMAIL_SUBJECT, "utf-8")
+                    
+                    body = MIMEText(remove_non_ascii(EMAIL_BODY), "plain", "utf-8")
+                    msg.attach(body)
 
-                server.sendmail(SENDER_EMAIL, email, msg.as_string())
-                print(f"Sent email to: {email}")
+                    server.sendmail(SENDER_EMAIL, email, msg.as_string())
+                    print(f"✅ Sent email to: {email}")
+                    sent_count += 1
+
+                    # Append sent email to sent_emails.txt
+                    with open(SENT_EMAILS_FILE, "a", encoding="utf-8") as f:
+                        f.write(email + "\n")
+
+                except Exception as e:
+                    print(f"❌ Failed to send email to {email}: {e}")
+                    failed_count += 1
 
     except Exception as e:
         print(f"SMTP error: {e}")
         sys.exit(1)
 
-    # Append sent emails to sent_emails.txt
-    with open(SENT_EMAILS_FILE, "a", encoding="utf-8") as f:
-        for email in new_emails:
-            f.write(email + "\n")
+    # Calculate and display success rate
+    total_attempted = sent_count + failed_count
+    success_rate = (sent_count / total_attempted * 100) if total_attempted > 0 else 0
 
-    print("All emails sent and recorded.")
+    print("\n===== Email Sending Summary =====")
+    print(f"✅ Successfully sent: {sent_count}")
+    print(f"❌ Failed to send: {failed_count}")
+    print(f"📊 Success rate: {success_rate:.2f}%")
+    print("================================")
 
 if __name__ == "__main__":
     send_bulk_emails()
