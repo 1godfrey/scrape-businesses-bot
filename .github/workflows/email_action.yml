@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true  # Allows committing changes
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,8 +22,17 @@ jobs:
       - name: Install dependencies
         run: pip install pandas email-validator
 
+      - name: Ensure sent_emails.txt exists
+        run: |
+          touch sent_emails.txt
+          git add sent_emails.txt
+          git commit -m "Ensure sent_emails.txt exists" || echo "No changes to commit"
+
       - name: Run email extraction script
         run: python extract_emails.py
+
+      - name: Remove duplicate emails
+        run: python filter_emails.py
 
       - name: Find the generated email CSV
         id: find_email_csv
@@ -44,12 +55,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Download extracted emails
-        uses: actions/download-artifact@v4
         with:
-          name: extracted_emails
-          path: extracted_emails
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -59,7 +66,13 @@ jobs:
       - name: Install dependencies
         run: pip install pandas email-validator
 
-      - name: Send emails
+      - name: Download extracted emails artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extracted_emails
+          path: extracted_emails
+
+      - name: Send emails and update sent_emails.txt
         env:
           SMTP_SERVER: "smtp.gmail.com"
           SMTP_PORT: "587"
@@ -67,3 +80,14 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           SENDER_EMAIL: "horizonautomationtools@gmail.com"
         run: python send_emails.py
+
+      - name: Commit and push updated sent_emails.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add sent_emails.txt
+          git commit -m "Update sent emails list" || echo "No changes to commit"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
+
