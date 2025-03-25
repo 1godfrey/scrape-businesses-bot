@@ -9,9 +9,13 @@ def clean_email(email):
     if not isinstance(email, str) or "@" not in email:
         return "N/A"
     
-    # Remove anything after ".com", ".net", ".org" etc.
-    email = re.split(r"(\.com|\.net|\.org|\.edu|\.io|\.co)", email, maxsplit=1)[0] + re.search(r"(\.com|\.net|\.org|\.edu|\.io|\.co)", email).group(0)
-
+    # Remove anything after the valid domain extensions
+    match = re.search(r"(\.com|\.net|\.org|\.edu|\.io|\.co)", email)
+    if match:
+        email = re.split(r"(\.com|\.net|\.org|\.edu|\.io|\.co)", email, maxsplit=1)[0] + match.group(0)
+    else:
+        return "N/A"  # If no valid domain, discard email
+    
     # Remove phone numbers and invalid characters
     email = re.sub(r"\d{7,}", "", email)  # Remove long numbers (phone numbers)
     email = re.sub(r"[^a-zA-Z0-9@._+-]", "", email)  # Remove special characters
@@ -34,7 +38,7 @@ def clean_csv_emails():
             df = pd.read_csv(file_path)
 
             if "Email" in df.columns:
-                df["Email"] = df["Email"].apply(clean_email)
+                df["Email"] = df["Email"].astype(str).apply(clean_email)
                 df.to_csv(file_path, index=False)
                 print(f"✅ Cleaned emails in {file}")
 

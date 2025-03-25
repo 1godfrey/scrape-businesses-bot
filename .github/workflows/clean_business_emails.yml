@@ -20,7 +20,7 @@ jobs:
         run: pip install pandas
 
       - name: Run email data cleaning
-        run: python clean_emails.py
+        run: python clean_email.py
 
       - name: Commit cleaned files
         run: |
