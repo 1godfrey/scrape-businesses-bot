@@ -7,6 +7,17 @@ from bs4 import BeautifulSoup
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 CATEGORIES = {
+    "personal trainers": "Fitness Trainer",
+    "photographers": "Photography Studio",
+    "wedding planners": "Event Planning",
+    "real estate agents": "Real Estate Agency",
+    "home renovation contractors": "Home Improvement",
+    "boutique marketing agencies": "Marketing Agency",
+    "auto repair shops": "Auto Repair",
+    "custom furniture makers": "Furniture Store",
+    "caterers": "Catering Business",
+    "local coffee shops": "Coffee Shop",
+    "spa and wellness centers": "Spa & Wellness",
     "tattoo artists": "Tattoo Shop",
     "barbers": "Barber Shop",
     "restaurants": "Restaurant",
@@ -36,7 +47,7 @@ def fetch_businesses(category, business_type):
         "type": "search",
         "api_key": SERPAPI_KEY,
         "hl": "en",
-        "num": 10
+        "num": 25
     }
     
     response = requests.get(url, params=params)
@@ -44,7 +55,7 @@ def fetch_businesses(category, business_type):
 
     businesses = []
     if "local_results" in data:
-        for result in data["local_results"][:10]:
+        for result in data["local_results"][:25]:
             website = result.get("website", "N/A")
             businesses.append({
                 "Business Name": result.get("title", "N/A"),
