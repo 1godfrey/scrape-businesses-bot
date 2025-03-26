@@ -30,11 +30,27 @@ jobs:
       - name: Find the generated CSV
         id: find_csv
         run: echo "CSV_FILE=$(find . -maxdepth 1 -name 'businesses_*.csv' | head -n 1)" >> $GITHUB_ENV
-      
-      - name: Display CSV contents
-        run: cat ${{ env.CSV_FILE }} || echo "No CSV file found"
 
-      - name: Upload CSV artifact
+      - name: Ensure businesses folder exists
+        run: mkdir -p businesses
+
+      - name: Move CSV to businesses folder
+        run: mv ${{ env.CSV_FILE }} businesses/ || echo "No CSV file to move"
+
+      - name: Display CSV contents
+        run: cat businesses/$(basename ${{ env.CSV_FILE }}) || echo "No CSV file found"
+
+      - name: Check if CSV exists in businesses folder
+        id: check_csv
+        run: |
+          if [ -f "businesses/$(basename ${{ env.CSV_FILE }})" ]; then
+            echo "UPLOAD_REQUIRED=false" >> $GITHUB_ENV
+          else
+            echo "UPLOAD_REQUIRED=true" >> $GITHUB_ENV
+          fi
+
+      - name: Upload CSV artifact (if not moved)
+        if: env.UPLOAD_REQUIRED == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: business_data
