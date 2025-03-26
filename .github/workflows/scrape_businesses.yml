@@ -34,8 +34,11 @@ jobs:
       - name: Ensure businesses folder exists
         run: mkdir -p businesses
 
-      - name: Move CSV to businesses folder
-        run: mv ${{ env.CSV_FILE }} businesses/ || echo "No CSV file to move"
+      - name: Copy CSV to businesses folder (for debugging)
+        run: cp ${{ env.CSV_FILE }} businesses/ || echo "No CSV file to copy"
+
+      - name: List contents of businesses folder
+        run: ls -lah businesses/
 
       - name: Display CSV contents
         run: cat businesses/$(basename ${{ env.CSV_FILE }}) || echo "No CSV file found"
@@ -49,9 +52,8 @@ jobs:
             echo "UPLOAD_REQUIRED=true" >> $GITHUB_ENV
           fi
 
-      - name: Upload CSV artifact (if not moved)
-        if: env.UPLOAD_REQUIRED == 'true'
+      - name: Upload CSV artifact
         uses: actions/upload-artifact@v4
         with:
           name: business_data
-          path: ${{ env.CSV_FILE }}
+          path: businesses/
