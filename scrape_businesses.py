@@ -47,7 +47,7 @@ def fetch_businesses(category, business_type):
         "type": "search",
         "api_key": SERPAPI_KEY,
         "hl": "en",
-        "num": 1
+        "num": 3
     }
     
     response = requests.get(url, params=params)
@@ -55,7 +55,7 @@ def fetch_businesses(category, business_type):
 
     businesses = []
     if "local_results" in data:
-        for result in data["local_results"][:1]:
+        for result in data["local_results"][:3]:
             website = result.get("website", "N/A")
             businesses.append({
                 "Business Name": result.get("title", "N/A"),
