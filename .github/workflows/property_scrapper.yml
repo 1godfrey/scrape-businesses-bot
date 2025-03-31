@@ -28,8 +28,10 @@ jobs:
 
       - name: Send Email with CSV Report
         env:
-          EMAIL_USER: ${{ secrets.SMTP_USERNAME }}
-          EMAIL_PASS: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_SERVER: "smtp.gmail.com"
+          SMTP_PORT: "587"
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           RECIPIENT_EMAIL: "mwalupindim@gmail.com"
         run: |
           python scripts/send_email.py
