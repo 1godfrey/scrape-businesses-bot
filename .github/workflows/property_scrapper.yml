@@ -20,11 +20,17 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 pandas selenium
+          pip install -r requirements.txt
+
+      - name: Set up Chrome for Selenium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y chromium-chromedriver
+          echo "CHROMEDRIVER_PATH=$(which chromedriver)" >> $GITHUB_ENV
 
       - name: Scrape Property Listings
-        run: |
-          python scripts/scrape_listings.py
+        run: python scripts/scrape_listings.py
 
       - name: Send Email with CSV Report
         env:
@@ -33,5 +39,4 @@ jobs:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           RECIPIENT_EMAIL: "mwalupindim@gmail.com"
-        run: |
-          python scripts/send_email.py
+        run: python scripts/send_email.py
