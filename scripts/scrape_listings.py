@@ -20,21 +20,21 @@ URLS = {
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 def scrape_craigslist():
-    """Scrapes Craigslist listings."""
-    print("Starting Craigslist scraping...")
+    print("Starting Craigslist scraping with Selenium...")
     listings = []
-    response = requests.get(URLS["craigslist"], headers=HEADERS)
     
-    if response.status_code != 200:
-        print(f"Failed to access Craigslist. Status Code: {response.status_code}")
-        return []
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    print("Craigslist page fetched successfully!")
-    soup = BeautifulSoup(response.text, "html.parser")
+    driver.get(URLS["craigslist"])
+    time.sleep(5)
 
+    soup = BeautifulSoup(driver.page_source, "html.parser")
     results = soup.find_all("li", class_="result-row")
+    
     print(f"Found {len(results)} listings on Craigslist.")
-
+    
     for listing in results:
         try:
             title = listing.find("a", class_="result-title").text
@@ -45,6 +45,7 @@ def scrape_craigslist():
         except Exception as e:
             print(f"Error processing a Craigslist listing: {e}")
 
+    driver.quit()
     return listings
 
 
@@ -60,7 +61,7 @@ def scrape_zillow():
     driver.get(URLS["zillow"])
     time.sleep(5)  
 
-    homes = driver.find_elements(By.CSS_SELECTOR, "li.ListItem-c11n-8-84-3")
+    homes = driver.find_elements(By.CSS_SELECTOR, "ListItem-c11n-8-84-3")
     print(f"Found {len(homes)} Zillow listings.")
 
     for i, home in enumerate(homes[:20]):
