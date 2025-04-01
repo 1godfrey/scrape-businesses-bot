@@ -29,10 +29,10 @@ jobs:
           git commit -m "Ensure sent_emails.txt exists" || echo "No changes to commit"
 
       - name: Run email extraction script
-        run: python extract_emails.py
+        run: python scripts/extract_emails.py
 
       - name: Remove duplicate emails
-        run: python filter_emails.py
+        run: python scripts/filter_emails.py
 
       - name: Find the generated email CSV
         id: find_email_csv
@@ -79,7 +79,7 @@ jobs:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           SENDER_EMAIL: "horizonautomationtools@gmail.com"
-        run: python send_emails.py
+        run: python scripts/send_emails.py
 
       - name: Commit and push updated sent_emails.txt
         env:
