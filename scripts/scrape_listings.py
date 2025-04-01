@@ -1,7 +1,12 @@
 import requests
 import csv
 import time
+import pandas as pd
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Define the URLs to scrape
 URLS = {
@@ -26,39 +31,64 @@ def scrape_craigslist():
     return listings
 
 def scrape_zillow():
+    """ Uses Selenium to scrape Zillow real estate listings. """
     listings = []
-    response = requests.get(URLS["zillow"], headers=HEADERS)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        for listing in soup.find_all("article"):
-            title = listing.find("address").text if listing.find("address") else "N/A"
-            price = listing.find("span", class_="list-card-price").text if listing.find("span", class_="list-card-price") else "N/A"
-            link = listing.find("a", class_="list-card-link")["href"] if listing.find("a", class_="list-card-link") else "N/A"
-            listings.append(["Zillow", title, price, f"https://www.zillow.com{link}"])
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Run in headless mode (no UI)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    driver.get(URLS["zillow"])
+    time.sleep(5)  # Allow JavaScript to load the page
+
+    homes = driver.find_elements(By.CSS_SELECTOR, "li.ListItem-c11n-8-84-3")  # Update if necessary
+    for home in homes[:20]:  # Limit to 20 listings
+        try:
+            title = home.find_element(By.CSS_SELECTOR, "address").text
+            price = home.find_element(By.CSS_SELECTOR, "span[data-test='property-card-price']").text
+            link = home.find_element(By.TAG_NAME, "a").get_attribute("href")
+            listings.append(["Zillow", title, price, link])
+        except:
+            continue
+
+    driver.quit()
     return listings
+
 
 def scrape_redfin():
+    """ Uses Selenium to scrape Redfin real estate listings. """
     listings = []
-    response = requests.get(URLS["redfin"], headers=HEADERS)
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        for listing in soup.find_all("div", class_="HomeCardContainer"):
-            title = listing.find("span", class_="homeAddress").text if listing.find("span", class_="homeAddress") else "N/A"
-            price = listing.find("span", class_="homePrice").text if listing.find("span", class_="homePrice") else "N/A"
-            link = listing.find("a", class_="cover-all")["href"] if listing.find("a", class_="cover-all") else "N/A"
-            listings.append(["Redfin", title, price, f"https://www.redfin.com{link}"])
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    driver.get(URLS["redfin"])
+    time.sleep(5)  # Allow JavaScript to load
+
+    homes = driver.find_elements(By.CSS_SELECTOR, "div.HomeCardContainer")
+    for home in homes[:20]:  # Limit to 20 listings
+        try:
+            title = home.find_element(By.CSS_SELECTOR, "div.address").text
+            price = home.find_element(By.CSS_SELECTOR, "span.price").text
+            link = home.find_element(By.TAG_NAME, "a").get_attribute("href")
+            listings.append(["Redfin", title, price, link])
+        except:
+            continue
+
+    driver.quit()
     return listings
+
 
 def scrape_facebook_marketplace():
-    listings = []
-    print("Facebook Marketplace scraping requires manual authentication and a headless browser.")
-    return listings
+    """ Facebook Marketplace requires login. Recommend manual scraping with Selenium. """
+    print("Facebook Marketplace scraping requires login and manual browsing.")
+    return []
+
 
 def save_to_csv(data, filename="property_listings.csv"):
-    with open(filename, "w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Source", "Title", "Price", "Link"])
-        writer.writerows(data)
+    df = pd.DataFrame(data, columns=["Source", "Title", "Price", "Link"])
+    df.to_csv(filename, index=False, encoding="utf-8")
+    print(f"Scraping complete. Data saved to {filename}")
+
 
 def main():
     all_listings = []
@@ -77,7 +107,7 @@ def main():
     all_listings.extend(scrape_facebook_marketplace())
 
     save_to_csv(all_listings)
-    print("Scraping complete. Data saved to property_listings.csv")
+    print("Scraping complete.")
 
 if __name__ == "__main__":
     main()
